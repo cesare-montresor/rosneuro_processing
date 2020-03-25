@@ -147,10 +147,19 @@ void SmrBci::Reset(void) {
 	this->integrator_->Reset();
 	this->intpp_.fill(0.5);
 
+
+	this->msg_.header.stamp = ros::Time::now();
+	this->msg_.softpredict.data = std::vector<float>(this->rawpp_.data(), this->rawpp_.data() + this->rawpp_.rows() * this->rawpp_.cols());
+	this->pub_data_.publish(this->msg_);
+
+	this->imsg_ = this->msg_;
+	this->pub_idata_.publish(this->imsg_);	
+
 }
 
 
 void SmrBci::on_received_data(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {
+
 
 	if(msg->eeg.info.nsamples == this->n_samples_ && msg->eeg.info.nchannels == this->n_channels_) {
 		this->new_neuro_frame_ = true;
@@ -163,11 +172,10 @@ void SmrBci::on_received_data(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {
 
 bool SmrBci::Classify(void) {
 
-
 	// Copy data in eigen structure
 	if(this->new_neuro_frame_== false)
 	{
-		ROS_WARN("Not available data to classify");
+		//ROS_WARN("Not available data to classify");
 		return false;
 	}
 
@@ -179,7 +187,7 @@ bool SmrBci::Classify(void) {
 	
 	if(this->buffer_->IsFull() == false)
 	{
-		ROS_WARN("The buffer is full");
+		ROS_WARN("The buffer is not full");
 		return false;
 	}
 

@@ -45,6 +45,7 @@ add_definitions(${EIGEN3_DEFINITIONS})
 
 add_library(${PROJECT_NAME}
 	src/SmrBci.cpp
+	#src/EogBci.cpp
 	
         #src/Laplacian.cpp
 )
