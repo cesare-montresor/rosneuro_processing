@@ -14,7 +14,6 @@
 #include <wtkprocessing/Laplacian.hpp>
 #include <wtkprocessing/Pwelch.hpp>
 #include <wtkprocessing/Gaussian.hpp>
-#include <wtkprocessing/Exponential.hpp>
 
 
 namespace rosneuro {
@@ -49,14 +48,10 @@ class SmrBci {
 		ros::NodeHandle		   p_nh_;
 		ros::Subscriber		   sub_data_;
 		ros::Publisher		   pub_data_;
-		ros::Publisher		   pub_idata_; //integrated
 		std::string                sub_topic_data_;
 		std::string	           pub_topic_data_;
-		std::string	           pub_topic_idata_;
 		bool 			   new_neuro_frame_;
 		rosneuro_msgs::NeuroOutput msg_;
-		rosneuro_msgs::NeuroOutput imsg_; //integrated
-
 		ros::ServiceServer	srv_classify_;
 		ros::ServiceServer	srv_reset_;
 
@@ -71,8 +66,6 @@ class SmrBci {
 		unsigned int 	psd_dolog_;
 		std::string 	decoder_type_;
 		std::string	decoder_path_;
-		float 		rejection_thr_;
-		float 		integration_thr_;
 		unsigned int	n_classes_;
 		unsigned int    predicted_class_;
 		std::vector<int> hard_prediction_;
@@ -86,14 +79,12 @@ class SmrBci {
 		Eigen::VectorXd dfet_;
 	
 		Eigen::VectorXd rawpp_;
-		Eigen::VectorXd intpp_;
 
 		wtk::proc::RingBuffer* 	buffer_;
 		wtk::proc::Laplacian*	laplacian_;
 		wtk::proc::Pwelch* 	psd_;
 		wtk::proc::Gaussian* 	decoder_; //TO DO generalize with other kinds of decoder
-		wtk::proc::Exponential*	integrator_;
-
+	
 
 
 
@@ -103,3 +94,4 @@ class SmrBci {
 
 
 #endif
+

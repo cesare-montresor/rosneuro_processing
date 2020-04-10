@@ -14,8 +14,7 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-
-	ros::Rate r(50);
+	ros::Rate r(10);
 	while(true)
 	{
 
