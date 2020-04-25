@@ -148,7 +148,7 @@ bool SmrBci::Classify(void) {
 	// Copy data in eigen structure
 	if(this->new_neuro_frame_== false)
 	{
-		ROS_WARN("Not available data to classify");
+		//ROS_WARN("Not available data to classify");
 		return false;
 	}
 

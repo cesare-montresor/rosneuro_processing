@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 	{
 
 		 if(smrbci.Classify() == true) {
-			std::cout <<"Classification" << std::endl; 
+			ROS_INFO_ONCE("Classification started"); 
 		 } 
 	
          ros::spinOnce();
