@@ -9,10 +9,10 @@ find_package(catkin REQUIRED COMPONENTS
 			 rosneuro_data
 			 rosneuro_msgs)
 find_package(Eigen3 REQUIRED)
+find_package(PkgConfig)
+pkg_search_module(WTKPROCESSING REQUIRED wtkprocessing)
 
 SET(CMAKE_BUILD_TYPE RelWithDebInfo)
-find_library(WTKPROCESSING_LIBRARIES libwtkprocessing)
-find_path(WTKPROCESSING_INCLUDE_DIRS wtkprocessing)
 
 catkin_package(
   INCLUDE_DIRS 
@@ -24,9 +24,7 @@ catkin_package(
 	std_msgs
 	rosneuro_data
 	rosneuro_msgs
-
   DEPENDS
-  Eigen3
 )
 
 ###########
@@ -53,6 +51,7 @@ add_library(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} 
 		     ${catkin_LIBRARIES} 
 		     ${WTKPROCESSING_LIBRARIES}
+			 ${Eigen3_LIBRARIES}
 )
 
 add_dependencies(${PROJECT_NAME} 
