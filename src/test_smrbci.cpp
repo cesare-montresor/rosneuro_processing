@@ -14,17 +14,16 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	ros::Rate r(10);
-	while(true)
+	ros::Rate r(100);
+	while(ros::ok())
 	{
 
-	 if(smrbci.Classify() == true) {
-	   std::cout <<"Classification" << std::endl; 
-	 } 
+		 if(smrbci.Classify() == true) {
+			std::cout <<"Classification" << std::endl; 
+		 } 
 	
          ros::spinOnce();
-	 r.sleep();
-
+		 r.sleep();
 	}
 
 	ros::shutdown();
