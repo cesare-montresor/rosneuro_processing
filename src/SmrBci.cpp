@@ -160,7 +160,7 @@ bool SmrBci::Classify(void) {
 	
 	if(this->buffer_->IsFull() == false)
 	{
-		ROS_WARN("The buffer is not full");
+		//ROS_WARN("The buffer is not full");
 		return false;
 	}
 
