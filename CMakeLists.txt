@@ -43,9 +43,7 @@ add_definitions(${EIGEN3_DEFINITIONS})
 
 add_library(${PROJECT_NAME}
 	src/SmrBci.cpp
-	#src/EogBci.cpp
-	
-        #src/Laplacian.cpp
+	src/EogBci.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} 
@@ -63,10 +61,10 @@ add_dependencies(${PROJECT_NAME}
 ## Executables ##
 #################
 
-#add_executable(test_laplacian src/test_laplacian.cpp)
-#target_link_libraries(test_laplacian rosneuro_processing)
-
 add_executable(test_smrbci src/test_smrbci.cpp)
 target_link_libraries(test_smrbci rosneuro_processing)
+
+add_executable(test_eogbci src/test_eogbci.cpp)
+target_link_libraries(test_eogbci rosneuro_processing)
 
 
