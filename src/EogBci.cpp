@@ -13,8 +13,7 @@ EogBci::EogBci(void): p_nh_("~") {
         this->buffer_ = new wtk::proc::RingBuffer();
 	this->butterfilter_ = new wtk::proc::ButterFilter();
 	this->envelope_ = new wtk::proc::Envelope();
-
-
+	
 	this->sub_topic_data_	 = "/neurodata";
 
 }
@@ -105,6 +104,11 @@ bool EogBci::configure(void) {
 	this->hvalue_ = Eigen::VectorXd::Zero(this->buffer_size_);
 	this->vvalue_ = Eigen::VectorXd::Zero(this->buffer_size_);
 
+	
+	this->sub_data_ = this->p_nh_.subscribe(this->sub_topic_data_, 1000, &EogBci::on_received_data, this);
+	this->new_neuro_frame_= false;
+
+
 }
 
 
@@ -122,7 +126,6 @@ float EogBci::GetFrameRate(void) {
 
 
 void EogBci::on_received_data(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {
-
 
 	if(msg->eeg.info.nsamples == this->n_samples_ && msg->eeg.info.nchannels == this->n_channels_) {
 		this->new_neuro_frame_ = true;
@@ -149,8 +152,8 @@ bool EogBci::Apply(void) {
 		return false;
 	}
 
-
 	this->dmap_ = Eigen::Map<Eigen::MatrixXf>(this->data_.data(), this->n_channels_, this->n_samples_);
+
 	this->dmap_.transposeInPlace();
 
 	// Extract channels from buffer

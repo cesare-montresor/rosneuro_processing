@@ -45,6 +45,7 @@ class EogBci {
 		ros::NodeHandle		   p_nh_;
 		std::string                sub_topic_data_;
 		bool 			   new_neuro_frame_;
+		ros::Subscriber		   sub_data_;
 		rosneuro_msgs::NeuroOutput msg_;
 
 		unsigned int 	buffer_size_;
