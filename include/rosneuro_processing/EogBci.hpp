@@ -9,12 +9,20 @@
 #include "rosneuro_msgs/NeuroFrame.h"
 #include "rosneuro_msgs/NeuroOutput.h"
 #include "rosneuro_data/NeuroDataTools.hpp"
+#include "rosneuro_msgs/NeuroEvent.h" 
 #include <wtkprocessing/RingBuffer.hpp>
 #include <wtkprocessing/ButterFilter.hpp>
 #include <wtkprocessing/Padding.hpp>
 #include <wtkprocessing/Envelope.hpp>
 
 #define EOG_CHANNELS 2
+
+
+///////////////////Gloria Beraldo:  TO DO REMOVE AND GENERALIZE //////////////////////////
+
+int EOG_EVENT = 1024;
+
+///////////////////////////////////////////////////////
 
 namespace rosneuro {
 
@@ -44,9 +52,13 @@ class EogBci {
 		ros::NodeHandle		   nh_;
 		ros::NodeHandle		   p_nh_;
 		std::string                sub_topic_data_;
+		std::string	           pub_topic_data_;
 		bool 			   new_neuro_frame_;
 		ros::Subscriber		   sub_data_;
+		ros::Publisher		   pub_data_;
 		rosneuro_msgs::NeuroOutput msg_;
+		rosneuro_msgs::NeuroEvent  emsg_;
+
 
 		unsigned int 	buffer_size_;
 		unsigned int 	n_channels_;

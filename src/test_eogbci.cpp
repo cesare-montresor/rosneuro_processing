@@ -20,6 +20,12 @@ int main(int argc, char** argv) {
 		 if(eogbci.Apply() == true) {
 			ROS_INFO_ONCE("Eog detection started"); 
 		 }
+
+		if(eogbci.HasArtifacts(1) == true) {
+		       ROS_INFO_ONCE("Eog detected"); 
+	
+		}
+
 	
 
          ros::spinOnce();

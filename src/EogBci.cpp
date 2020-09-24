@@ -15,6 +15,7 @@ EogBci::EogBci(void): p_nh_("~") {
 	this->envelope_ = new wtk::proc::Envelope();
 	
 	this->sub_topic_data_	 = "/neurodata";
+	this->pub_topic_data_  = "/events/bus";
 
 }
 
@@ -106,6 +107,7 @@ bool EogBci::configure(void) {
 
 	
 	this->sub_data_ = this->p_nh_.subscribe(this->sub_topic_data_, 1000, &EogBci::on_received_data, this);
+	this->pub_data_ = this->p_nh_.advertise<rosneuro_msgs::NeuroEvent>(this->pub_topic_data_, 1); 
 	this->new_neuro_frame_= false;
 
 
@@ -200,7 +202,15 @@ bool EogBci::HasArtifacts(unsigned int count) {
 	}
 
 	if( (hcount >= count) || (vcount >= count) ) {
-		printf("Found %u samples with artifacts\n", std::max(hcount, vcount));
+		//ROS_INFO("Found %u samples with artifacts\n", std::max(hcount, vcount));
+
+		 this->emsg_.header = this->msg_.header;
+	 	 this->emsg_.header.stamp = ros::Time::now();
+	 	 this->emsg_.event = EOG_EVENT;
+	
+	 	this->pub_data_.publish(this->emsg_);
+	
+
 		return true;
 	} else {
 		return false;
