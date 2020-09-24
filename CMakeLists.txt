@@ -67,4 +67,7 @@ target_link_libraries(test_smrbci rosneuro_processing)
 add_executable(test_eogbci src/test_eogbci.cpp)
 target_link_libraries(test_eogbci rosneuro_processing)
 
+add_executable(test_processing src/test_eogbci.cpp)
+target_link_libraries(test_processing rosneuro_processing)
+
 
