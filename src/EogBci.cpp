@@ -41,7 +41,7 @@ bool EogBci::configure(void) {
 	ros::param::param("~eog_filter_order", (int&) this->eog_order_, 2); 
 	ros::param::param("~eog_filter_fcoff1", (double&) this->eog_fcoff1_, 1.0); 
 	ros::param::param("~eog_filter_fcoff2", (double&) this->eog_fcoff2_, 10.0); 
-	ros::param::param("~eog_threshold", (double&) this->eog_threshold_, 30.0); 
+	ros::param::param("~eog_threshold", (double&) this->eog_threshold_, 30.0);
 
 
 

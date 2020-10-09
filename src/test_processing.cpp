@@ -4,9 +4,11 @@
 
 int main(int argc, char** argv) {
 
-	
+	std::cerr<<"PROVA 0"<<std::endl;
 	// ros initialization
 	ros::init(argc, argv, "processing");
+
+	std::cerr<<"PROVA 1"<<std::endl;
 
 
 	rosneuro::SmrBci smrbci;
@@ -22,6 +24,8 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
+	std::cerr<<"PROVA 2"<<std::endl;
+
 	ros::Rate r(256);
 	while(ros::ok())
 	{
@@ -34,12 +38,11 @@ int main(int argc, char** argv) {
 
 		// EOG DETECTION
 		 if(eogbci.Apply() == true) {
-			ROS_INFO_ONCE("Eog detection started"); 
+			ROS_INFO_ONCE("Eog detection started");
 		 }
 
 		if(eogbci.HasArtifacts(1) == true) {
-		       ROS_INFO_ONCE("Eog detected"); 
-	
+		       ROS_INFO_ONCE("Eog detected"); 	
 		}
 
 	
