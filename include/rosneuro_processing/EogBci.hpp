@@ -5,11 +5,13 @@
 
 
 #include <ros/ros.h>
+#include <dynamic_reconfigure/server.h>
 
 #include "rosneuro_msgs/NeuroFrame.h"
 #include "rosneuro_msgs/NeuroOutput.h"
 #include "rosneuro_data/NeuroDataTools.hpp"
-#include "rosneuro_msgs/NeuroEvent.h" 
+#include "rosneuro_msgs/NeuroEvent.h"
+#include "rosneuro_processing/EogBciConfig.h"
 #include <wtkprocessing/RingBuffer.hpp>
 #include <wtkprocessing/ButterFilter.hpp>
 #include <wtkprocessing/Padding.hpp>
@@ -25,6 +27,8 @@ int EOG_EVENT = 1024;
 ///////////////////////////////////////////////////////
 
 namespace rosneuro {
+
+typedef dynamic_reconfigure::Server<rosneuro_processing::EogBciConfig> EogBciReconfig;
 
 class EogBci {
 
@@ -45,6 +49,10 @@ class EogBci {
 
 	private: 
 		void on_received_data(const rosneuro_msgs::NeuroFrame::ConstPtr& msg);
+		void on_reconfigure_callback(rosneuro_processing::EogBciConfig &config, 
+									 uint32_t level);
+
+		bool  update_if_different(const double& first, double& second, double epsilon = 0.00001);
 
 
 	private: 
@@ -58,6 +66,9 @@ class EogBci {
 		ros::Publisher		   pub_data_;
 		rosneuro_msgs::NeuroOutput msg_;
 		rosneuro_msgs::NeuroEvent  emsg_;
+
+		EogBciReconfig				reconfig_server_;
+		EogBciReconfig::CallbackType		reconfig_function_;
 
 
 		unsigned int 	buffer_size_;

@@ -110,6 +110,10 @@ bool EogBci::configure(void) {
 	this->pub_data_ = this->p_nh_.advertise<rosneuro_msgs::NeuroEvent>(this->pub_topic_data_, 1); 
 	this->new_neuro_frame_= false;
 
+	// Dynamic reconfiguration server
+	this->reconfig_function_ = boost::bind(&EogBci::on_reconfigure_callback, this, _1, _2);
+	this->reconfig_server_.setCallback(this->reconfig_function_);
+	std::cout << "Eog reconfigure set up" << std::endl;
 
 }
 
@@ -228,6 +232,33 @@ bool EogBci::HasArtifacts(void) {
 		return false;
 }
 
+void EogBci::on_reconfigure_callback(rosneuro_processing::EogBciConfig &config, 
+								uint32_t level) {
+
+	// Frequency cut-off 1
+	if(this->update_if_different(config.eog_filter_fcoff1, this->eog_fcoff1_))
+		ROS_WARN("Updated eog fcoff1 to %f", this->eog_fcoff1_);
+	
+	// Frequency cut-off 2
+	if(this->update_if_different(config.eog_filter_fcoff2, this->eog_fcoff2_))
+		ROS_WARN("Updated eog fcoff2 to %f", this->eog_fcoff2_);
+	
+	// Eog threshold
+	if(this->update_if_different(config.eog_threshold, this->eog_threshold_))
+		ROS_WARN("Updated eog threshold to %f", this->eog_threshold_);
+
+}
+
+bool EogBci::update_if_different(const double& first, double& second, double epsilon) {
+
+	bool is_different = false;
+	if(std::fabs(first - second) >= epsilon) {
+		second = first;
+		is_different = true;
+	}
+
+	return is_different;
+}
 
 }
 
