@@ -115,6 +115,8 @@ bool EogBci::configure(void) {
 	this->reconfig_server_.setCallback(this->reconfig_function_);
 	std::cout << "Eog reconfigure set up" << std::endl;
 
+	return true;
+
 }
 
 
