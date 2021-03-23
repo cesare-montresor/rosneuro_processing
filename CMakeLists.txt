@@ -69,4 +69,7 @@ add_dependencies(${PROJECT_NAME}
 add_executable(test_smrbci src/test_smrbci.cpp)
 target_link_libraries(test_smrbci rosneuro_processing)
 
+add_executable(test_processing src/test_processing.cpp)
+target_link_libraries(test_processing rosneuro_processing)
+
 
