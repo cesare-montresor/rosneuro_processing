@@ -1,96 +1,56 @@
 #include <ros/ros.h>
-#include "rosneuro_msgs/NeuroFrame.h"
-#include "rosneuro_msgs/NeuroOutput.h"
-#include "rosneuro_data/NeuroDataTools.hpp"
-
-#include <wtkprocessing/RingBuffer.hpp>
-
-#define SUBTOPIC	"/neurodata"
-#define PUBTOPIC	"/neuroprediction"
-#define NSAMPLES	32
-#define NCHANNELS	16
-#define BUFFER_SIZE 512
-#define SELECTED_CHANNEL 1
-
-// Global variables
-
-unsigned int n_samples   = NSAMPLES;
-unsigned int n_channels  = NCHANNELS;
-unsigned int buffer_size = BUFFER_SIZE;
-bool newframe = false;
-
-rosneuro_msgs::NeuroOutput neuromsg;
-std::vector<float> neurodata;
-
-
-void on_received_data(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {
-	if(msg->eeg.info.nsamples == n_samples && msg->eeg.info.nchannels == n_channels) {
-		newframe = true;
-		neurodata = msg->eeg.data;
-		//neuromsg.softpredict.info = neuromsg.hardpredict.info = msg->eeg.info;
-	}
-
-}
+#include "rosneuro_processing/EogBci.hpp"
+#include "rosneuro_processing/SmrBci.hpp"
 
 int main(int argc, char** argv) {
-	
+
+	std::cerr<<"PROVA 0"<<std::endl;
 	// ros initialization
-	ros::init(argc, argv, "test_processing");
+	ros::init(argc, argv, "processing");
+
+	std::cerr<<"PROVA 1"<<std::endl;
+
+
+	rosneuro::SmrBci smrbci;
+	rosneuro::EogBci eogbci;
+
+	if(smrbci.configure()== false) {
+		std::cerr<<"SMR BCI SETUP ERROR"<<std::endl;
+		return -1;
+	}
 	
-	ros::NodeHandle nh;
-	ros::Subscriber sub;
-	ros::Publisher  pub;
+	if(eogbci.configure()== false) {
+		std::cerr<<"EOG SETUP ERROR"<<std::endl;
+		return -1;
+	}
+
+	std::cerr<<"PROVA 2"<<std::endl;
+
 	ros::Rate r(256);
+	while(ros::ok())
+	{
 
-	std::string stopic		= SUBTOPIC;
-	std::string ptopic		= PUBTOPIC;
+		// SMR BCI
+		if(smrbci.Classify() == true) {
+			ROS_INFO_ONCE("Classification started"); 
+		 } 
 
-	Eigen::MatrixXf dmap;
-	Eigen::MatrixXd dbuf;
-	Eigen::VectorXd dvec;
 
-	wtk::proc::RingBuffer* 	buffer;
-	buffer = new wtk::proc::RingBuffer();
+		// EOG DETECTION
+		 if(eogbci.Apply() == true) {
+			ROS_INFO_ONCE("Eog detection started");
+		 }
 
-	// Subscriber/Publisher initialization
-	sub = nh.subscribe(stopic, 1, on_received_data);
-	pub = nh.advertise<rosneuro_msgs::NeuroOutput>(ptopic, 1);
+		if(eogbci.HasArtifacts(1) == true) {
+		       ROS_INFO_ONCE("Eog detected"); 	
+		}
 
-	// Buffer and matrix initialization
-	buffer->Setup(buffer_size, n_channels);
-	dmap = Eigen::MatrixXf::Zero(n_channels, n_samples);
-	dbuf = Eigen::MatrixXd::Zero(buffer_size, n_channels);
-	dvec = Eigen::VectorXd::Zero(buffer_size);
-
-	double maxval;
-	float output;
-	while(ros::ok()) {
-		ros::spinOnce();
-		r.sleep();
-
-		if(newframe == false)
-			continue;
-
-		dmap = Eigen::Map<Eigen::MatrixXf>(neurodata.data(), n_channels, n_samples);
-		dmap.transposeInPlace();
-
-		buffer->Add(dmap.cast<double>());
 	
-		if(buffer->IsFull() == false)
-			continue;
 
-		buffer->Get(dbuf);
+         ros::spinOnce();
+		 r.sleep();
+	}
 
-		dvec = dbuf.col(SELECTED_CHANNEL).cwiseAbs();
-
-		maxval = dvec.maxCoeff();
-		output = (float)(dvec / maxval).mean();
-       
-
-		neuromsg.header.stamp = ros::Time::now();
-		neuromsg.softpredict.data = {output, 1-output};
-		pub.publish(neuromsg);
-		newframe = false;
-
-	}	
+	ros::shutdown();
+	return 0;
 }
