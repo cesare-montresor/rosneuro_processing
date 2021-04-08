@@ -26,6 +26,7 @@ void on_received_data(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {
 	if(msg->eeg.info.nsamples == n_samples && msg->eeg.info.nchannels == n_channels) {
 		newframe = true;
 		neurodata = msg->eeg.data;
+		neuromsg.neuroheader.frame_rel_seq = msg->header.seq;
 		//neuromsg.softpredict.info = neuromsg.hardpredict.info = msg->eeg.info;
 	}
 
